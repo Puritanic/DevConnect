@@ -1,6 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const users = require('./routes/api/users');
+const profiles = require('./routes/api/profiles');
+const posts = require('./routes/api/posts');
+
 const PORT = process.env.PORT || 5050;
 
 const app = express();
@@ -16,5 +20,10 @@ mongoose
 app.get('/', (req, res) => {
 	res.send('Hello!');
 });
+
+// Routes
+app.use('/api/users', users);
+app.use('/api/profiles', profiles);
+app.use('/api/posts', posts);
 
 app.listen(PORT, () => console.log(`Server up and running on port ${PORT}`));
