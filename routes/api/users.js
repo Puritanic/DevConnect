@@ -2,6 +2,7 @@ const express = require('express');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
 
 const User = require('../../models/User');
 const keys = require('../../config/keys');
@@ -34,7 +35,11 @@ router.post('/register', (req, res) =>
 			});
 		}
 
-		const { name, email, password } = req.body;
+		const {
+			name,
+			email,
+			password
+		} = req.body;
 		const avatar = gravatar.url(email, {
 			s: '200', // Size
 			r: 'pg', // Rating
@@ -69,7 +74,10 @@ router.post('/register', (req, res) =>
  * @access  Public
  */
 router.post('/login', (req, res) => {
-	const { email, password } = req.body;
+	const {
+		email,
+		password
+	} = req.body;
 	// Find user by mail
 	User.findOne({
 		email,
@@ -98,8 +106,7 @@ router.post('/login', (req, res) => {
 			// Sign token
 			return jwt.sign(
 				payload,
-				keys.secret,
-				{
+				keys.secret, {
 					expiresIn: 3600,
 				},
 				(err, token) =>
@@ -111,5 +118,20 @@ router.post('/login', (req, res) => {
 		});
 	});
 });
+
+/**
+ * @route   GET api/users/current
+ * @desc    Return current User
+ * @access  Private
+ */
+router.get(
+	'/current',
+	passport.authenticate('jwt', {
+		session: false,
+	}),
+	(req, res) => {
+		res.json(req.user);
+	}
+);
 
 module.exports = router;
