@@ -4,6 +4,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
+// Load input validation
+const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
+
 const User = require('../../models/User');
 const keys = require('../../config/keys');
 
@@ -25,21 +29,23 @@ router.get('/test', (req, res) =>
  * @desc    Registers User
  * @access  Public
  */
-router.post('/register', (req, res) =>
+router.post('/register', (req, res) => {
+	const { errors, isValid } = validateRegisterInput(req.body);
+
+	// Validate request body
+	if (!isValid) {
+		return res.status(400).json(errors);
+	}
+
 	User.findOne({
 		email: req.body.email,
 	}).then(user => {
 		if (user) {
-			return res.status(400).json({
-				email: 'Email is not valid',
-			});
+			errors.email = 'Email is not valid';
+			return res.status(400).json(errors);
 		}
 
-		const {
-			name,
-			email,
-			password
-		} = req.body;
+		const { name, email, password } = req.body;
 		const avatar = gravatar.url(email, {
 			s: '200', // Size
 			r: 'pg', // Rating
@@ -62,39 +68,42 @@ router.post('/register', (req, res) =>
 				newUser
 					.save()
 					.then(savedUser => res.json(savedUser))
-					.catch(e => console.log(e));
+					.catch(console.log);
 			});
 		});
-	})
-);
+	});
+});
 
 /**
  * @route   GET api/users/login
  * @desc    Login User / Returning JWT token
  * @access  Public
  */
+
 router.post('/login', (req, res) => {
-	const {
-		email,
-		password
-	} = req.body;
+	const { errors, isValid } = validateLoginInput(req.body);
+	const { email, password } = req.body;
+
+	// Validate request body
+	if (!isValid) {
+		return res.status(400).json(errors);
+	}
+
 	// Find user by mail
 	User.findOne({
 		email,
 	}).then(user => {
 		// Check for user
 		if (!user) {
-			return res.status(404).json({
-				email: 'User not found',
-			});
+			errors.email = 'User not found';
+			return res.status(404).json(errors);
 		}
 
 		// Check password
 		bcrypt.compare(password, user.password).then(isMatch => {
 			if (!isMatch) {
-				return res.status(400).json({
-					password: 'Wrong credentials',
-				});
+				errors.password = 'Wrong credentials';
+				return res.status(400).json(errors);
 			}
 			// Pass good, create JWT payload
 			const payload = {
@@ -106,7 +115,8 @@ router.post('/login', (req, res) => {
 			// Sign token
 			return jwt.sign(
 				payload,
-				keys.secret, {
+				keys.secret,
+				{
 					expiresIn: 3600,
 				},
 				(err, token) =>

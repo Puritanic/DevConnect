@@ -24,7 +24,6 @@ const DB = require('./config/keys').mongoURI;
 // Passport config
 app.use(passport.initialize());
 require('./config/passport')(passport);
-
 mongoose
 	.connect(DB)
 	.then(() => console.log('MongoDB connected'))
