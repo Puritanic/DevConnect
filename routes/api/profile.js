@@ -4,6 +4,7 @@ const passport = require('passport');
 
 const router = express.Router();
 
+const validateProfileInput = require('../../validation/profile');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 
@@ -26,6 +27,7 @@ router.get('/test', (req, res) =>
 router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
 	const errors = {};
 	Profile.findOne({ user: req.user.id })
+		.populate('user', ['name', 'avatar']) // Populate with data from User Scheme that's connected through Profile Scheme
 		.then(profile => {
 			if (!profile) {
 				errors.noProfile = 'There is no profile for this user';
@@ -43,7 +45,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => 
  * @access  Private
  */
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
-	const errors = {};
+	const { errors, isValid } = validateProfileInput(req.body);
 	const {
 		handle,
 		company,
@@ -60,6 +62,8 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 	} = req.body;
 	// Get profile fields
 	const profileFields = {};
+	// Check if input is valid
+	if (!isValid) return res.status(400).json(errors);
 
 	profileFields.user = req.user.id;
 
@@ -76,11 +80,11 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 	}
 	// Social
 	profileFields.social = {};
-	if (youTube) profileFields.youTube = youTube;
-	if (twitter) profileFields.twitter = twitter;
-	if (linkedIn) profileFields.linkedIn = linkedIn;
-	if (facebook) profileFields.facebook = facebook;
-	if (instagram) profileFields.instagram = instagram;
+	if (youTube) profileFields.social.youTube = youTube;
+	if (twitter) profileFields.social.twitter = twitter;
+	if (linkedIn) profileFields.social.linkedIn = linkedIn;
+	if (facebook) profileFields.social.facebook = facebook;
+	if (instagram) profileFields.social.instagram = instagram;
 
 	Profile.findOne({ user: req.user.id })
 		.then(profile => {

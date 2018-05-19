@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 
 const users = require('./routes/api/users');
-const profiles = require('./routes/api/profiles');
+const profile = require('./routes/api/profile');
 const posts = require('./routes/api/posts');
 
 const PORT = process.env.PORT || 5050;
@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/users', users);
-app.use('/api/profile', profiles);
+app.use('/api/profile', profile);
 app.use('/api/posts', posts);
 
 app.listen(PORT, () => console.log(`Server up and running on port ${PORT}`));
