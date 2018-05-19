@@ -28,39 +28,41 @@ router.post('/register', (req, res) => {
 
 	User.findOne({
 		email: req.body.email,
-	}).then(user => {
-		if (user) {
-			errors.email = 'Email is not valid';
-			return res.status(400).json(errors);
-		}
+	})
+		.then(user => {
+			if (user) {
+				errors.email = 'Email is not valid';
+				return res.status(400).json(errors);
+			}
 
-		const { name, email, password } = req.body;
-		const avatar = gravatar.url(email, {
-			s: '200', // Size
-			r: 'pg', // Rating
-			d: 'mm', // Default
-		});
-		const newUser = new User({
-			name,
-			email,
-			avatar,
-			password,
-		});
-
-		bcrypt.genSalt(10, (error, salt) => {
-			if (error) throw error;
-
-			bcrypt.hash(newUser.password, salt, (err, hash) => {
-				if (err) throw err;
-
-				newUser.password = hash;
-				newUser
-					.save()
-					.then(savedUser => res.json(savedUser))
-					.catch(console.log);
+			const { name, email, password } = req.body;
+			const avatar = gravatar.url(email, {
+				s: '200', // Size
+				r: 'pg', // Rating
+				d: 'mm', // Default
 			});
-		});
-	});
+			const newUser = new User({
+				name,
+				email,
+				avatar,
+				password,
+			});
+
+			bcrypt.genSalt(10, (error, salt) => {
+				if (error) throw error;
+
+				bcrypt.hash(newUser.password, salt, (err, hash) => {
+					if (err) throw err;
+
+					newUser.password = hash;
+					newUser
+						.save()
+						.then(savedUser => res.json(savedUser))
+						.catch(console.log);
+				});
+			});
+		})
+		.catch(err => res.status(400).json(err));
 });
 
 /**
@@ -81,41 +83,43 @@ router.post('/login', (req, res) => {
 	// Find user by mail
 	User.findOne({
 		email,
-	}).then(user => {
-		// Check for user
-		if (!user) {
-			errors.email = 'User not found';
-			return res.status(404).json(errors);
-		}
-
-		// Check password
-		bcrypt.compare(password, user.password).then(isMatch => {
-			if (!isMatch) {
-				errors.password = 'Wrong credentials';
-				return res.status(400).json(errors);
+	})
+		.then(user => {
+			// Check for user
+			if (!user) {
+				errors.email = 'User not found';
+				return res.status(404).json(errors);
 			}
-			// Pass good, create JWT payload
-			const payload = {
-				id: user.id,
-				name: user.name,
-				avatar: user.avatar,
-			};
 
-			// Sign token
-			return jwt.sign(
-				payload,
-				keys.secret,
-				{
-					expiresIn: 3600,
-				},
-				(err, token) =>
-					res.json({
-						success: true,
-						token: `Bearer ${token}`,
-					})
-			);
-		});
-	});
+			// Check password
+			bcrypt.compare(password, user.password).then(isMatch => {
+				if (!isMatch) {
+					errors.password = 'Wrong credentials';
+					return res.status(400).json(errors);
+				}
+				// Pass good, create JWT payload
+				const payload = {
+					id: user.id,
+					name: user.name,
+					avatar: user.avatar,
+				};
+
+				// Sign token
+				return jwt.sign(
+					payload,
+					keys.secret,
+					{
+						expiresIn: 3600,
+					},
+					(err, token) =>
+						res.json({
+							success: true,
+							token: `Bearer ${token}`,
+						})
+				);
+			});
+		})
+		.catch(err => res.status(400).json(err));
 });
 
 /**
