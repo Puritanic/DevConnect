@@ -27,7 +27,9 @@ require('./config/passport')(passport);
 mongoose
 	.connect(DB)
 	.then(() => console.log('MongoDB connected'))
-	.catch(err => console.log(err));
+	.catch(err => {
+		throw new Error(err);
+	});
 
 app.get('/', (req, res) => {
 	res.send('Hello!');
@@ -35,7 +37,7 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/users', users);
-app.use('/api/profiles', profiles);
+app.use('/api/profile', profiles);
 app.use('/api/posts', posts);
 
 app.listen(PORT, () => console.log(`Server up and running on port ${PORT}`));

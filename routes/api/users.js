@@ -14,17 +14,6 @@ const keys = require('../../config/keys');
 const router = express.Router();
 
 /**
- * @route   GET api/users/test
- * @desc    Tests users route
- * @access  Public
- */
-router.get('/test', (req, res) =>
-	res.json({
-		msg: 'Users',
-	})
-);
-
-/**
  * @route   GET api/users/register
  * @desc    Registers User
  * @access  Public
@@ -75,7 +64,7 @@ router.post('/register', (req, res) => {
 });
 
 /**
- * @route   GET api/users/login
+ * @route   POST api/users/login
  * @desc    Login User / Returning JWT token
  * @access  Public
  */
