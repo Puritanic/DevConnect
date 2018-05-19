@@ -212,7 +212,39 @@ router.post('/experience', passport.authenticate('jwt', { session: false }), (re
 });
 
 /**
- * @route   POST api/profile/education
+ * @route   DELETE api/profile/experience/:id
+ * @desc    Delete experience
+ * @access  Private
+ */
+router.delete(
+	'/experience/:exp_id',
+	passport.authenticate('jwt', { session: false }),
+	(req, res) => {
+		const errors = {};
+
+		Profile.findOne({ user: req.user.id })
+			.then(profile => {
+				if (!profile) {
+					errors.noProfile = 'There is no profile page for this user';
+					return res.status(404).json(errors);
+				}
+				// Instructors solution :P Mine's better
+				// Get remove index
+				// const removeIndex = profile.experience
+				// 	.map(exp => exp.id)
+				// 	.indexOf(req.params.exp_id);
+				// // Splice it out of the array
+				// profile.experience.splice(removeIndex, 1);
+				const newExp = profile.experience.filter(exp => exp.id !== req.params.exp_id);
+				profile.experience = newExp;
+				profile.save().then(profile => res.json(profile));
+			})
+			.catch(() => res.json(404).json({ profile: 'Error while deleting experience' }));
+	}
+);
+
+/**
+ * @route   POST api/profile/education/:id
  * @desc    Add education to profile page
  * @access  Private
  */
@@ -244,5 +276,43 @@ router.post('/education', passport.authenticate('jwt', { session: false }), (req
 		})
 		.catch(() => res.json(404).json({ profile: 'There is no profile page here' }));
 });
+
+/**
+ * @route   DELETE api/profile/education
+ * @desc    Delete education
+ * @access  Private
+ */
+router.delete(
+	'/education/:edu_id',
+	passport.authenticate('jwt', { session: false }),
+	(req, res) => {
+		const errors = {};
+
+		Profile.findOne({ user: req.user.id })
+			.then(profile => {
+				if (!profile) {
+					errors.noProfile = 'There is no profile page for this user';
+					return res.status(404).json(errors);
+				}
+				const newEdu = profile.education.filter(edu => edu.id !== req.params.edu_id);
+				profile.education = newEdu;
+				profile.save().then(profile => res.json(profile));
+			})
+			.catch(() => res.json(404).json({ profile: 'Error while deleting education' }));
+	}
+);
+
+/**
+ * @route   DELETE api/profile
+ * @desc    Delete user and profile
+ * @access  Private
+ */
+router.delete('/', passport.authenticate('jwt', { session: false }), (req, res) =>
+	Profile.findOneAndRemove({ user: req.user.id })
+		.then(() =>
+			User.findOneAndRemove({ _id: req.user.id }).then(() => res.json({ success: true }))
+		)
+		.catch(() => res.json(404).json({ profile: 'Error while deleting profile' }))
+);
 
 module.exports = router;
