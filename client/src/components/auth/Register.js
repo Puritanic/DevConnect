@@ -1,10 +1,21 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
+
+import { registerUser } from '../../actions/authActions';
 
 export class Register extends Component {
-	static propTypes = {};
+	static propTypes = {
+		errors: PropTypes.object,
+		auth: PropTypes.shape({
+			user: PropTypes.shape({}),
+			isAuthenticated: PropTypes.bool,
+		}).isRequired,
+		registerUser: PropTypes.func,
+	};
 
 	constructor(props) {
 		super(props);
@@ -16,6 +27,14 @@ export class Register extends Component {
 			password2: '',
 			errors: {},
 		};
+	}
+
+	static getDerivedStateFromProps(nextProps, prevState) {
+		if (nextProps.errors) {
+			return {
+				errors: nextProps.errors,
+			};
+		}
 	}
 
 	onInputChange = e => {
@@ -32,16 +51,12 @@ export class Register extends Component {
 			password,
 			password2,
 		};
-		console.log(newUser);
 
-		axios
-			.post('/api/users/register', newUser)
-			.then(res => console.log(res.data))
-			.catch(err => this.setState({ errors: err.response.data }));
+		return this.props.registerUser(newUser, this.props.history);
 	};
 
 	render() {
-		const { errors } = this.state;
+		const { errors } = this.props;
 		return (
 			<div className="register">
 				<div className="container">
@@ -124,4 +139,13 @@ export class Register extends Component {
 	}
 }
 
-export default Register;
+const mapStateToProps = state => ({
+	auth: state.auth,
+	errors: state.errors,
+});
+
+const mapDispatchToProps = dispatch => ({
+	registerUser: (userData, redirect) => dispatch(registerUser(userData, redirect)),
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Register));
