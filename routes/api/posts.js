@@ -128,4 +128,71 @@ router.post('/unlike/:id', passport.authenticate('jwt', { session: false }), (re
 	);
 });
 
+/**
+ * @route   POST api/posts/comment/:post_id
+ * @desc    Add comment to post
+ * @access  Private
+ */
+router.post('/comment/:post_id', passport.authenticate('jwt', { session: false }), (req, res) => {
+	const { errors, isValid } = validatePostInput(req.body);
+	// Check if input is valid
+	if (!isValid) return res.status(400).json(errors);
+
+	Post.findById(req.params.post_id)
+		.then(post => {
+			const newComment = {
+				user: req.user.id,
+				name: req.user.name,
+				avatar: req.user.avatar,
+				text: req.body.text,
+			};
+
+			// Add to comments array
+			post.comments.unshift(newComment);
+			// Save
+			post
+				.save()
+				.then(post => res.json(post))
+				.catch(err =>
+					res.status(404).json({ postNotFound: 'Post not found', devMsg: err })
+				);
+		})
+		.catch(err => res.status(404).json({ postNotFound: 'Post not found', devMsg: err }));
+});
+
+/**
+ * @route   DELETE api/posts/comment/:post_id/:comment_id
+ * @desc   	Delete comment from post
+ * @access  Private
+ */
+router.delete(
+	'/comment/:post_id/:comment_id',
+	passport.authenticate('jwt', { session: false }),
+	(req, res) => {
+		Post.findById(req.params.post_id)
+			.then(post => {
+				// Check if comment exists
+				if (
+					post.comments.filter(
+						comment => comment._id.toString() === req.params.comment_id
+					).length === 0
+				) {
+					return res.status(404).json({ commentNotExists: "Can't find that comment" });
+				}
+
+				// Remove comment from comments array
+				post.comments = post.comments.filter(
+					comment => comment._id.toString() !== req.params.comment_id
+				);
+				post
+					.save()
+					.then(updatedPost => res.json(updatedPost))
+					.catch(err =>
+						res.json({ errHappened: 'Somethings wrong, please try again', devMsg: err })
+					);
+			})
+			.catch(err => res.status(404).json({ postNotFound: 'Post not found', devMsg: err }));
+	}
+);
+
 module.exports = router;
