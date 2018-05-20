@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import classnames from 'classnames';
 
 export class Register extends Component {
 	static propTypes = {};
@@ -36,10 +37,11 @@ export class Register extends Component {
 		axios
 			.post('/api/users/register', newUser)
 			.then(res => console.log(res.data))
-			.catch(err => console.log(err.response.data));
+			.catch(err => this.setState({ errors: err.response.data }));
 	};
 
 	render() {
+		const { errors } = this.state;
 		return (
 			<div className="register">
 				<div className="container">
@@ -47,26 +49,36 @@ export class Register extends Component {
 						<div className="col-md-8 m-auto">
 							<h1 className="display-4 text-center">Sign Up</h1>
 							<p className="lead text-center">Create your DevConnector account</p>
-							<form onSubmit={this.onSubmit} action="create-profile.html">
+							<form noValidate onSubmit={this.onSubmit} action="create-profile.html">
 								<div className="form-group">
 									<input
 										type="text"
-										className="form-control form-control-lg"
+										className={classnames('form-control form-control-lg', {
+											'is-invalid': errors.name,
+										})}
 										placeholder="Name"
 										name="name"
 										value={this.state.name}
 										onChange={this.onInputChange}
 									/>
+									{errors.name && (
+										<p className="invalid-feedback">{errors.name}</p>
+									)}
 								</div>
 								<div className="form-group">
 									<input
 										type="email"
-										className="form-control form-control-lg"
+										className={classnames('form-control form-control-lg', {
+											'is-invalid': errors.email,
+										})}
 										placeholder="Email Address"
 										name="email"
 										value={this.state.email}
 										onChange={this.onInputChange}
 									/>
+									{errors.email && (
+										<p className="invalid-feedback">{errors.email}</p>
+									)}
 									<small className="form-text text-muted">
 										This site uses Gravatar so if you want a profile image, use
 										a Gravatar email
@@ -75,22 +87,32 @@ export class Register extends Component {
 								<div className="form-group">
 									<input
 										type="password"
-										className="form-control form-control-lg"
+										className={classnames('form-control form-control-lg', {
+											'is-invalid': errors.password,
+										})}
 										placeholder="Password"
 										name="password"
 										value={this.state.password}
 										onChange={this.onInputChange}
 									/>
+									{errors.password && (
+										<p className="invalid-feedback">{errors.password}</p>
+									)}
 								</div>
 								<div className="form-group">
 									<input
 										type="password"
-										className="form-control form-control-lg"
+										className={classnames('form-control form-control-lg', {
+											'is-invalid': errors.password2,
+										})}
 										placeholder="Confirm Password"
 										name="password2"
 										value={this.state.password2}
 										onChange={this.onInputChange}
 									/>
+									{errors.password2 && (
+										<p className="invalid-feedback">{errors.password2}</p>
+									)}
 								</div>
 								<input type="submit" className="btn btn-info btn-block mt-4" />
 							</form>
