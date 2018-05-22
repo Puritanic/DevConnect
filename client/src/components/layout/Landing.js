@@ -1,9 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 export class Landing extends Component {
-	static propTypes = {};
+	static propTypes = {
+		auth: PropTypes.shape({
+			isAuthenticated: PropTypes.bool,
+		}),
+	};
+
+	componentDidMount() {
+		if (this.props.auth.isAuthenticated) {
+			this.props.history.push('/dashboard');
+		}
+	}
 
 	render() {
 		return (
@@ -33,4 +44,8 @@ export class Landing extends Component {
 	}
 }
 
-export default Landing;
+const mapStateToProps = state => ({
+	auth: state.auth,
+});
+
+export default connect(mapStateToProps)(Landing);
