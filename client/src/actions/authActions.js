@@ -3,6 +3,7 @@ import jwtDecode from 'jwt-decode';
 
 import types from './types';
 import setAuthToken from '../utils/setAuthToken';
+import { clearProfile } from './profileActions';
 
 export const registerUser = (userData, redirect) => dispatch =>
 	axios
@@ -50,6 +51,7 @@ export const logoutUser = () => dispatch => {
 	localStorage.removeItem('jwtToken');
 	// Remove auth header for future requests
 	setAuthToken(false);
+	dispatch(clearProfile());
 	// Set current user to {} which will set isAuthenticated to false
 	dispatch(setCurrentUser({}));
 };

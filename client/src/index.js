@@ -9,6 +9,7 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import setAuthToken from './utils/setAuthToken';
 import { setCurrentUser, logoutUser } from './actions/authActions';
+import { clearProfile } from './actions/profileActions';
 
 const Root = () => (
 	<Provider store={store}>
@@ -29,7 +30,8 @@ if (localStorage.getItem('jwtToken')) {
 	if (decoded.exp < currentTime) {
 		// Logout user if token has expired
 		store.dispatch(logoutUser());
-		// TODO: Clear current profile
+		// Clear current profile
+		store.dispatch(clearProfile());
 		// Redirect to login page
 		window.location.href = '/login';
 	}
