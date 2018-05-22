@@ -1,4 +1,4 @@
-import types from '../actions/authActions';
+import types from '../actions/types';
 import isEmpty from '../utils/isEmpty';
 
 const initialState = {
