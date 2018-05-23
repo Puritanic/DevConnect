@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
 
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Landing from './components/layout/Landing';
+import Dashboard from './components/dashboard/Dashboard';
+import CreateProfile from './components/createProfile/CreateProfile';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-import Dashboard from './components/dashboard/Dashboard';
+import PrivateRoute from './components/auth/PrivateRoute';
 
 class App extends Component {
 	render() {
@@ -17,9 +19,12 @@ class App extends Component {
 					<Navbar />
 					<Route exact path="/" component={Landing} />
 					<div className="container">
-						<Route path="/register" component={Register} />
-						<Route path="/login" component={Login} />
-						<Route path="/dashboard" component={Dashboard} />
+						<Switch>
+							<Route path="/register" component={Register} />
+							<Route path="/login" component={Login} />
+							<PrivateRoute path="/dashboard" component={Dashboard} />
+							<PrivateRoute path="/create-profile" component={CreateProfile} />
+						</Switch>
 					</div>
 					<Footer />
 				</div>

@@ -1,5 +1,4 @@
 import types from '../actions/types';
-import isEmpty from '../utils/isEmpty';
 
 const initialState = {
 	profile: null,

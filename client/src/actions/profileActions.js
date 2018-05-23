@@ -9,6 +9,12 @@ export const clearProfile = () => ({
 	type: types.CLEAR_PROFILE,
 });
 
+export const createProfile = (profileData, history) => dispatch =>
+	axios
+		.post('/api/profile', profileData)
+		.then(res => history.push('/dashboard'))
+		.catch(err => dispatch({ type: types.GET_ERRORS, payload: err.response.data }));
+
 // Get current profile
 export const getCurrentProfile = () => dispatch => {
 	dispatch(fetchProfile());

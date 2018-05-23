@@ -19,7 +19,7 @@ class Navbar extends Component {
 		e.preventDefault();
 		this.props.logoutUser();
 		// Redirect to login page
-		this.props.history.push('/login');
+		// this.props.history.push('/login');
 	};
 
 	render() {
