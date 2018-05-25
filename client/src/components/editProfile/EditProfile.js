@@ -3,17 +3,19 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import { createProfile } from '../../actions/profileActions';
+import { createProfile, getCurrentProfile } from '../../actions/profileActions';
 
 import TextFieldGroup from '../common/TextFieldGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import InputGroup from '../common/InputGroup';
 import SelectListGroup from '../common/SelectListGroup';
+import isEmpty from '../../utils/isEmpty';
 
-class CreateProfile extends Component {
+class EditProfile extends Component {
 	static propTypes = {
 		profile: PropTypes.shape({}),
 		errors: PropTypes.shape({}),
+		getCurrentProfile: PropTypes.func.isRequired,
 		createProfile: PropTypes.func.isRequired,
 	};
 
@@ -39,12 +41,34 @@ class CreateProfile extends Component {
 		};
 	}
 
+	componentDidMount() {
+		this.props.getCurrentProfile();
+	}
+
 	static getDerivedStateFromProps(nextProps, prevState) {
-		if (nextProps.errors) {
+		if (!isEmpty(nextProps.errors)) {
 			return {
 				errors: nextProps.errors,
 			};
 		}
+		if (nextProps.profile.profile) {
+			const { profile } = nextProps.profile;
+			const newState = {};
+			// Turn skills arr into CSV
+			profile.skills = profile.skills.join(',');
+			// If profile field doesn't exists, make empty string
+			Object.keys(prevState).map(val => {
+				if (val !== 'errors') {
+					if (isEmpty(profile[val])) {
+						newState[val] = '';
+					} else {
+						newState[val] = profile[val];
+					}
+				}
+			});
+			return newState;
+		}
+		return null;
 	}
 
 	onSubmit = e => {
@@ -152,10 +176,7 @@ class CreateProfile extends Component {
 				<div className="container">
 					<div className="row">
 						<div className="col-md-8 m-auto">
-							<h1 className="display-4 text-center">Create Your Profile</h1>
-							<p className="lead text-center">
-								Let's get some information to make your profile stand out
-							</p>
+							<h1 className="display-4 text-center">Edit Your Profile</h1>
 							<small className="d-block pb-3">* required fields</small>
 							<form onSubmit={this.onSubmit}>
 								<TextFieldGroup
@@ -251,4 +272,6 @@ class CreateProfile extends Component {
 
 const mapStateToProps = ({ profile, errors }) => ({ profile, errors });
 
-export default withRouter(connect(mapStateToProps, { createProfile })(CreateProfile));
+export default withRouter(
+	connect(mapStateToProps, { createProfile, getCurrentProfile })(EditProfile)
+);

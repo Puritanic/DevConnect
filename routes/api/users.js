@@ -14,7 +14,7 @@ const keys = require('../../config/keys');
 const router = express.Router();
 
 /**
- * @route   GET api/users/register
+ * @route   POST api/users/register
  * @desc    Registers User
  * @access  Public
  */
