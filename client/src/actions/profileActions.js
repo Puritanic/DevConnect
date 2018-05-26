@@ -13,11 +13,14 @@ export const deleteEducation = value => {};
 
 export const deleteExperience = value => {};
 
+export const addEducation = value => {};
+export const addExperience = value => {};
+
 // Delete acc and profile
 export const deleteAccount = () => dispatch => {
 	if (window.confirm("Are you sure? This can't be undone")) {
 		axios
-			.delete('/ap/profile')
+			.delete('/api/profile')
 			.then(res => {
 				dispatch({
 					type: types.SET_CURRENT_USER,

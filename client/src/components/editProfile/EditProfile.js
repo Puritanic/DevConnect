@@ -38,6 +38,7 @@ class EditProfile extends Component {
 			twitter: '',
 			website: '',
 			youTube: '',
+			fetched: false,
 		};
 	}
 
@@ -51,11 +52,13 @@ class EditProfile extends Component {
 				errors: nextProps.errors,
 			};
 		}
-		if (nextProps.profile.profile) {
+		if (nextProps.profile.profile && !prevState.fetched) {
 			const { profile } = nextProps.profile;
 			const newState = {};
-			// Turn skills arr into CSV
-			profile.skills = profile.skills.join(',');
+			// Check if skills is array, and turn them into CSV
+			if (profile.skills.constructor === Array) {
+				profile.skills = profile.skills.join(',');
+			}
 			// If profile field doesn't exists, make empty string
 			Object.keys(prevState).map(val => {
 				if (val !== 'errors') {
@@ -66,6 +69,7 @@ class EditProfile extends Component {
 					}
 				}
 			});
+			newState.fetched = true;
 			return newState;
 		}
 		return null;

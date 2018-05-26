@@ -8,6 +8,8 @@ import Landing from './components/layout/Landing';
 import Dashboard from './components/dashboard/Dashboard';
 import CreateProfile from './components/createProfile/CreateProfile';
 import EditProfile from './components/editProfile/EditProfile';
+import AddEducation from './components/addCredentials/AddEducation';
+import AddExperience from './components/addCredentials/AddExperience';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import PrivateRoute from './components/auth/PrivateRoute';
@@ -26,6 +28,8 @@ class App extends Component {
 							<PrivateRoute path="/dashboard" component={Dashboard} />
 							<PrivateRoute path="/create-profile" component={CreateProfile} />
 							<PrivateRoute path="/edit-profile" component={EditProfile} />
+							<PrivateRoute path="/add-exp" component={AddExperience} />
+							<PrivateRoute path="/add-edu" component={AddEducation} />
 						</Switch>
 					</div>
 					<Footer />
