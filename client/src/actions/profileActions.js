@@ -133,6 +133,25 @@ export const getCurrentProfile = () => dispatch => {
 		);
 };
 
+export const getProfileByHandle = handle => dispatch => {
+	dispatch(fetchProfile());
+
+	axios
+		.get(`/api/profile/handle/${handle}`)
+		.then(res =>
+			dispatch({
+				type: types.GET_PROFILE,
+				payload: res.data,
+			})
+		)
+		.catch(() =>
+			dispatch({
+				type: types.GET_PROFILE,
+				payload: {},
+			})
+		);
+};
+
 export const getProfiles = () => dispatch => {
 	dispatch(fetchProfile());
 
