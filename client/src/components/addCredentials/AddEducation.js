@@ -103,7 +103,7 @@ class AddEducation extends Component {
 									value={this.state.to}
 									onChange={this.onChange}
 									error={errors.to}
-									disabled={this.state.disabled ? 'disabled' : ''}
+									disabled={this.state.disabled}
 								/>
 								<div className="form-check mb-4">
 									<input
@@ -116,7 +116,7 @@ class AddEducation extends Component {
 										id="current"
 									/>
 									<label htmlFor="current" className="form-check-label">
-										Current Job
+										Currently student
 									</label>
 								</div>
 								<TextAreaFieldGroup
