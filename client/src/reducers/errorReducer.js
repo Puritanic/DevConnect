@@ -6,6 +6,8 @@ export default (state = initialState, action) => {
 	switch (action.type) {
 		case types.GET_ERRORS:
 			return action.payload;
+		case types.CLEAR_ERRORS:
+			return initialState;
 		default:
 			return state;
 	}

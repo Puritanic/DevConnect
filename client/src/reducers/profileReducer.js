@@ -14,6 +14,8 @@ export default (state = initialState, action) => {
 			return { ...state, isLoading: false, profile: action.payload };
 		case types.CLEAR_PROFILE:
 			return { ...state, isLoading: false, profile: null };
+		case types.GET_PROFILES:
+			return { ...state, isLoading: false, profiles: action.payload };
 		default:
 			return state;
 	}

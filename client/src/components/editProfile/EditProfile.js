@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 
 import { createProfile, getCurrentProfile } from '../../actions/profileActions';
 
@@ -25,12 +25,10 @@ class EditProfile extends Component {
 		this.state = {
 			bio: '',
 			company: '',
-			errors: {},
 			facebook: '',
 			githubUsername: '',
 			handle: '',
 			instagram: '',
-			isSocialVisible: false,
 			linkedIn: '',
 			location: '',
 			skills: '',
@@ -38,7 +36,9 @@ class EditProfile extends Component {
 			twitter: '',
 			website: '',
 			youTube: '',
+			errors: {},
 			fetched: false,
+			isSocialVisible: false,
 		};
 	}
 
@@ -53,8 +53,11 @@ class EditProfile extends Component {
 			};
 		}
 		if (nextProps.profile.profile && !prevState.fetched) {
-			const { profile } = nextProps.profile;
+			// TODO: Fix redux architecture! Look at this shit damn
+			const { social, user, ...restProfile } = nextProps.profile.profile;
+			const profile = { ...restProfile, ...social };
 			const newState = {};
+
 			// Check if skills is array, and turn them into CSV
 			if (profile.skills.constructor === Array) {
 				profile.skills = profile.skills.join(',');
@@ -68,6 +71,7 @@ class EditProfile extends Component {
 						newState[val] = profile[val];
 					}
 				}
+				return null;
 			});
 			newState.fetched = true;
 			return newState;
@@ -77,24 +81,9 @@ class EditProfile extends Component {
 
 	onSubmit = e => {
 		e.preventDefault();
+		const { errors, fetched, isSocialVisible, ...userData } = this.state;
 
-		const profileData = {
-			bio: this.state.bio,
-			company: this.state.company,
-			facebook: this.state.facebook,
-			githubUsername: this.state.githubUsername,
-			handle: this.state.handle,
-			instagram: this.state.instagram,
-			linkedIn: this.state.linkedIn,
-			location: this.state.location,
-			skills: this.state.skills,
-			status: this.state.status,
-			twitter: this.state.twitter,
-			website: this.state.website,
-			youTube: this.state.youTube,
-		};
-
-		return this.props.createProfile(profileData, this.props.history);
+		return this.props.createProfile(userData, this.props.history);
 	};
 
 	onChange = e => {
@@ -135,7 +124,7 @@ class EditProfile extends Component {
 
 					<InputGroup
 						placeholder="Linkedin Profile URL"
-						name="linkedin"
+						name="linkedIn"
 						icon="fab fa-linkedin"
 						value={this.state.linkedIn}
 						onChange={this.onChange}
@@ -144,7 +133,7 @@ class EditProfile extends Component {
 
 					<InputGroup
 						placeholder="YouTube Channel URL"
-						name="youtube"
+						name="youTube"
 						icon="fab fa-youtube"
 						value={this.state.youTube}
 						onChange={this.onChange}
@@ -180,6 +169,9 @@ class EditProfile extends Component {
 				<div className="container">
 					<div className="row">
 						<div className="col-md-8 m-auto">
+							<Link to="/dashboard" className="btn btn-light">
+								Go Back
+							</Link>
 							<h1 className="display-4 text-center">Edit Your Profile</h1>
 							<small className="d-block pb-3">* required fields</small>
 							<form onSubmit={this.onSubmit}>

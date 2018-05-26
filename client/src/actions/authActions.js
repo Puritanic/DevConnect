@@ -9,12 +9,15 @@ export const registerUser = (userData, redirect) => dispatch =>
 	axios
 		.post('/api/users/register', userData)
 		.then(() => redirect.push('/login'))
-		.catch(err =>
+		.catch(err => {
 			dispatch({
 				type: types.GET_ERRORS,
 				payload: err.response.data,
-			})
-		);
+			});
+			dispatch({
+				type: types.CLEAR_ERRORS,
+			});
+		});
 
 export const setCurrentUser = decodedUser => ({
 	type: types.SET_CURRENT_USER,
@@ -36,6 +39,9 @@ export const loginUser = userData => dispatch => {
 			const decoded = jwtDecode(token);
 			// Set current user
 			dispatch(setCurrentUser(decoded));
+			dispatch({
+				type: types.CLEAR_ERRORS,
+			});
 		})
 		.catch(err =>
 			dispatch({

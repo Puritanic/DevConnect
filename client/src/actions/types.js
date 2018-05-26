@@ -6,6 +6,7 @@ export default keyMirror({
 	SET_CURRENT_USER: null,
 	// Errors
 	GET_ERRORS: null,
+	CLEAR_ERRORS: null,
 	// Profiles
 	GET_PROFILE: null,
 	GET_PROFILES: null,
