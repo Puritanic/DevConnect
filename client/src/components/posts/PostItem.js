@@ -6,25 +6,16 @@ import classnames from 'classnames';
 import { deletePost, addLike, removeLike } from '../../actions/postActions';
 
 class PostItem extends Component {
-	onDeleteClick = id => {
-		this.props.deletePost(id);
-	};
+	onDeleteClick = id => this.props.deletePost(id);
 
-	onLikeClick = id => {
-		this.props.addLike(id);
-	};
+	onLikeClick = id => this.props.addLike(id);
 
-	onUnlikeClick = id => {
-		this.props.removeLike(id);
-	};
+	onUnlikeClick = id => this.props.removeLike(id);
 
 	findUserLike = likes => {
 		const { auth } = this.props;
-		if (likes.filter(like => like.user === auth.user.id).length > 0) {
-			return true;
-		} else {
-			return false;
-		}
+		if (likes.filter(like => like.user === auth.user.id).length > 0) return true;
+		return false;
 	};
 
 	render() {

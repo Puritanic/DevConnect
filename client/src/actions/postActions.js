@@ -42,7 +42,7 @@ export const fetchPosts = dispatch => ({
 
 export const deletePost = postId => dispatch =>
 	axios
-		.delete(`/api/posts/${id}`)
+		.delete(`/api/posts/${postId}`)
 		.then(res => {
 			dispatch({
 				type: types.DELETE_POST,
@@ -56,6 +56,28 @@ export const deletePost = postId => dispatch =>
 			});
 		});
 
-export const addLike = () => dispatch => {};
+export const addLike = postId => dispatch =>
+	axios
+		.post(`/api/posts/like/${postId}`)
+		.then(res => {
+			dispatch(getPosts());
+		})
+		.catch(err => {
+			dispatch({
+				type: types.GET_ERRORS,
+				payload: err.response.data,
+			});
+		});
 
-export const removeLike = () => dispatch => {};
+export const removeLike = postId => dispatch =>
+	axios
+		.post(`/api/posts/unlike/${postId}`)
+		.then(res => {
+			dispatch(getPosts());
+		})
+		.catch(err => {
+			dispatch({
+				type: types.GET_ERRORS,
+				payload: err.response.data,
+			});
+		});
