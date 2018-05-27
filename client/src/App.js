@@ -14,6 +14,7 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Profiles from './components/profiles/Profiles';
 import Profile from './components/profile/Profile';
+import Posts from './components/posts/Posts';
 import NotFound from './components/common/NotFound';
 import PrivateRoute from './components/auth/PrivateRoute';
 
@@ -34,6 +35,7 @@ class App extends Component {
 							<PrivateRoute path="/edit-profile" component={EditProfile} />
 							<PrivateRoute path="/add-exp" component={AddExperience} />
 							<PrivateRoute path="/add-edu" component={AddEducation} />
+							<PrivateRoute path="/feed" component={Posts} />
 							<Route path="/profile/:handle" component={Profile} />
 							<Route path="/404" component={NotFound} />
 							<Route component={NotFound} />

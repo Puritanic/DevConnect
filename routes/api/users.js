@@ -1,8 +1,8 @@
 const express = require('express');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
 
 // Load input validation
 const validateRegisterInput = require('../../validation/register');
@@ -39,7 +39,7 @@ router.post('/register', (req, res) => {
 			const avatar = gravatar.url(email, {
 				s: '200', // Size
 				r: 'pg', // Rating
-				d: 'mm', // Default
+				d: 'retro', // Default
 			});
 			const newUser = new User({
 				name,

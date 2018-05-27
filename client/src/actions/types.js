@@ -10,7 +10,12 @@ export default keyMirror({
 	// Profiles
 	GET_PROFILE: null,
 	GET_PROFILES: null,
-	GET_PROFILE_ERROR: null,
 	PROFILE_LOADING: null,
 	CLEAR_PROFILE: null,
+	// Posts
+	GET_POST: null,
+	GET_POSTS: null,
+	ADD_POST: null,
+	DELETE_POST: null,
+	POST_LOADING: null,
 });

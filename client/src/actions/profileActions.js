@@ -78,7 +78,6 @@ export const deleteExperience = id => dispatch => {
 			});
 		});
 };
-
 // Delete acc and profile
 export const deleteAccount = () => dispatch => {
 	if (window.confirm("Are you sure? This can't be undone")) {
