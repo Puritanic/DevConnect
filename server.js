@@ -32,10 +32,6 @@ mongoose
 		throw new Error(err);
 	});
 
-app.get('/', (req, res) => {
-	res.send('Hello!');
-});
-
 // Routes
 app.use('/api/users', users);
 app.use('/api/profile', profile);
